@@ -1,9 +1,6 @@
 package com.emma;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-
 import java.util.ArrayList;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -271,6 +268,27 @@ class FindTheGeometricShapeTest {
         coordinateList.add(new Coordinate(13, 4, 5));
         coordinateList.add(new Coordinate(13, 7, 5));
         coordinateList.add(new Coordinate(6, 7, 5));
+        findTheGeometricShape = new FindTheGeometricShape(coordinateList);
+
+        String expected = "Rectangular Prism";
+
+        String actual = findTheGeometricShape.getNameOfTheShape();
+
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void should_ReturnAnswerRectanglePrism_when_EightCoordinatesWithTwoEquallyLongSidesDifferentPlanes() {
+
+        coordinateList.add(new Coordinate(0, 4, 6));
+        coordinateList.add(new Coordinate(0, 4, 13));
+        coordinateList.add(new Coordinate(0, 7, 13));
+        coordinateList.add(new Coordinate(0, 7, 6));
+        coordinateList.add(new Coordinate(5, 4, 6));
+        coordinateList.add(new Coordinate(5, 4, 13));
+        coordinateList.add(new Coordinate(5, 7, 13));
+        coordinateList.add(new Coordinate(5, 7, 6));
         findTheGeometricShape = new FindTheGeometricShape(coordinateList);
 
         String expected = "Rectangular Prism";

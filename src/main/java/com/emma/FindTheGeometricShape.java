@@ -12,7 +12,7 @@ public class FindTheGeometricShape {
     private Coordinate p6;
     private Coordinate p7;
     private Coordinate p8;
-    private ArrayList<Coordinate> coordinateList;
+    private final ArrayList<Coordinate> coordinateList;
 
     private int distanceP1_P2;
     private int distanceP2_P3;
@@ -85,9 +85,9 @@ public class FindTheGeometricShape {
                 name = "Triangle";
                 break;
             case 4:
-                if (isShapeSquare(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1)) {
+                if (isShapeSquare()) {
                     name = "Square";
-                } else if (isShapeRectangle(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1, p1, p2, p3, p4)) {
+                } else if (isShapeRectangle()) {
                     name = "Rectangle";
                 } else if (isShapeParallelogram()) {
                     name = "Parallelogram";
@@ -99,17 +99,14 @@ public class FindTheGeometricShape {
                 }
                 break;
             case 8:
-                if (isShapeSquare(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1) && isShapeSquare(distanceP5_P6, distanceP6_P7, distanceP7_P8, distanceP8_P5)) {
-                    if (distanceP1_P5 == (distanceP1_P2 + distanceP5_P6) / 2 && distanceP2_P6 == (distanceP1_P2 + distanceP5_P6) / 2 && distanceP3_P7 == (distanceP1_P2 + distanceP5_P6) / 2 && distanceP4_P8 == (distanceP1_P2 + distanceP5_P6) / 2) {
-                        name = "Cube";
-                    }
+                if (isShapeCube()) {
+                    name = "Cube";
                 }
 
-                if (isShapeRectangle(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1, p1, p2, p3, p4) && isShapeRectangle(distanceP5_P6, distanceP6_P7, distanceP7_P8, distanceP8_P5, p5, p6, p7, p8) && distanceP1_P5 == distanceP2_P6 && distanceP2_P6 == distanceP3_P7 && distanceP3_P7 == distanceP4_P8 ||
-                        isShapeSquare(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1) && isShapeSquare(distanceP5_P6, distanceP6_P7, distanceP7_P8, distanceP8_P5) && distanceP1_P5 == distanceP2_P6 && distanceP2_P6 == distanceP3_P7 && distanceP3_P7 == distanceP4_P8 && distanceP1_P5 != distanceP1_P2) {
-
+                else if (isRectangularPrism()) {
                     name = "Rectangular Prism";
                 }
+                break;
 
         }
 
@@ -122,16 +119,51 @@ public class FindTheGeometricShape {
                 name = "3D Shape";
             }
         }
-
         return name;
     }
 
+    private boolean isShapeCube() {
+        return isEquallySpaced(
+                distanceP1_P2,
+                distanceP2_P3,
+                distanceP3_P4,
+                distanceP4_P1,
+                distanceP5_P6,
+                distanceP6_P7,
+                distanceP7_P8,
+                distanceP8_P5,
+                distanceP1_P5,
+                distanceP2_P6,
+                distanceP3_P7,
+                distanceP4_P8);
+    }
+
+    private boolean isRectangularPrism() {
+        if (!isTwoOppositeSidesEquallyLong(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1)) {
+            return false;
+        }
+
+        if (!isTwoOppositeSidesEquallyLong(distanceP5_P6, distanceP6_P7, distanceP7_P8, distanceP8_P5)) {
+            return false;
+        }
+        return isEquallySpaced(distanceP1_P5, distanceP2_P6, distanceP3_P7, distanceP4_P8);
+    }
+
+    private boolean isEquallySpaced(int... distances) {
+        for (int i = 1; i < distances.length; i++) {
+            int first = distances[i-1];
+            int second = distances[i];
+            if (first != second) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     private int getSquaredDistance(Coordinate i, Coordinate j) {
         return (i.x - j.x) * (i.x - j.x) + (i.y - j.y) * (i.y - j.y) + (i.z - j.z) * (i.z - j.z);
     }
-
 
 
     private int getNumberOfDimensionsInShape() {
@@ -140,80 +172,83 @@ public class FindTheGeometricShape {
         int yPlane = 0;
         int zPlane = 0;
 
-        for (int i = 0; i < coordinateList.size()-1; i++) {
-            for (int j = i+1; j < coordinateList.size(); j++) {
+        for (Coordinate coordinate : coordinateList) {
 
-                if (coordinateList.get(i).x != 0 && coordinateList.get(j).x != 0 && coordinateList.get(i).x != coordinateList.get(j).x) {
-                    xPlane = 1;
-                }
+            if (coordinate.x != 0) {
+                xPlane = 1;
+            }
 
-                if (coordinateList.get(i).y != 0 && coordinateList.get(j).y != 0 && coordinateList.get(i).y != coordinateList.get(j).y) {
-                    yPlane = 1;
-                }
+            if (coordinate.y != 0) {
+                yPlane = 1;
+            }
 
-                if (coordinateList.get(i).z != 0 && coordinateList.get(j).z != 0 && coordinateList.get(i).z != coordinateList.get(j).z) {
-                    zPlane = 1;
-                }
+            if (coordinate.z != 0) {
+                zPlane = 1;
             }
         }
-        System.out.println("getNumberOfDimensionsInShape() " + xPlane +" "+ yPlane +" "+ zPlane);
         return xPlane + yPlane + zPlane;
     }
 
 
-    private boolean isShapeSquare(int d1, int d2, int d3, int d4) {
+    private boolean isShapeSquare() {
 
-        return d1 == d2 && d1 == d3 && d1 == d4;
+        return isEquallySpaced(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1);
     }
 
 
-    private boolean isShapeRectangle(int d1, int d2, int d3, int d4, Coordinate... coordinates) {
-        return hasTwoEquallyLongOppositeSides(d1, d2, d3, d4) && getPointsOnSamePlane(coordinates) == 4;
-    }
-
-    private boolean isShapeTwoRectangle(int d1, int d2, int d3, int d4, Coordinate... coordinates) {
-        return hasTwoEquallyLongOppositeSides(d1, d2, d3, d4) && getPointsOnSamePlane(coordinates) == 4;
+    private boolean isShapeRectangle() {
+        return isTwoOppositeSidesEquallyLong(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1) &&
+                getPointsOnSamePlane() == 4;
     }
 
 
     private boolean isShapeParallelogram() {
-        return hasTwoEquallyLongOppositeSides(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1) && getPointsOnSamePlane() == 2;
+        return isTwoOppositeSidesEquallyLong(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1) &&
+                getPointsOnSamePlane() == 2;
     }
 
 
     private boolean isShapePyramid() {
-        if (isShapeSquare(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1) || isShapeRectangle(distanceP1_P2, distanceP2_P3, distanceP3_P4, distanceP4_P1, p1, p2, p3, p4)) {
+        if (isShapeSquare() || isShapeRectangle()) {
             return p5.z > p1.z || p5.z > p2.z || p5.z > p3.z || p5.z > p4.z;
         }
             return false;
     }
 
 
-    private boolean hasTwoEquallyLongOppositeSides(int d1, int d2, int d3, int d4) {
+    private boolean isTwoOppositeSidesEquallyLong(int d1, int d2, int d3, int d4) {
         return d1 == d3 && d2 == d4;
     }
 
 
-    private int getPointsOnSamePlane(Coordinate... coordinates) {
+    private int getPointsOnSamePlane() {
 
         int xPlane = 0;
         int yPlane = 0;
         int zPlane = 0;
 
-        for (int i = 0; i < coordinateList.size()-1; i++) {
-            for (int j = i+1; j < coordinateList.size(); j++) {
+        for (int i = 0; i < coordinateList.size(); i++) {
+            int j = i+1 == coordinateList.size() ? 0 : i+1;
+            Coordinate first = coordinateList.get(i);
+            Coordinate second = coordinateList.get(j);
 
-                if (coordinateList.get(i).x != 0 && coordinateList.get(j).x != 0 && coordinateList.get(i).x == coordinateList.get(j).x) {
-                    xPlane += 1;
-                } else if (coordinateList.get(i).y != 0 && coordinateList.get(j).y != 0 && coordinateList.get(i).y == coordinateList.get(j).y) {
-                    yPlane += 1;
-                } else if (coordinateList.get(i).z != 0 && coordinateList.get(j).z != 0 && coordinateList.get(i).z == coordinateList.get(j).z) {
-                    zPlane += 1;
-                }
+            if (first.x == second.x && first.x != 0) {
+                xPlane += 1;
+            }
+
+            if (first.y == second.y && first.y != 0) {
+                yPlane += 1;
+            }
+
+            if (first.z == second.z && first.z != 0) {
+                zPlane += 1;
             }
         }
+
         System.out.println("Plane " + " X " + xPlane + " Y " + yPlane + " Z " + zPlane);
         return xPlane + yPlane + zPlane;
     }
+
+
 
 }
